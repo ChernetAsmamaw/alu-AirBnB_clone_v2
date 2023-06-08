@@ -6,4 +6,4 @@ CREATE USER IF NOT EXISTS 'hbnb_dev'@'localhost' IDENTIFIED BY 'hbnb_dev_pwd';
 GRANT ALL PRIVILEGES ON hbnb_dev_db.* TO 'hbnb_dev'@'localhost';
 -- hbnb_dev has SELECT privilege on the database performance_schema
 GRANT SELECT ON performance_schema.* TO 'hbnb_dev'@'localhost';
--- If hbnb_dev_db or user hbnb_dev already exists, script don't fail
+-- If hbnb_dev_db or user hbnb_dev already exists, script does not fail -
