@@ -91,3 +91,9 @@ class test_basemodel(unittest.TestCase):
         n = new.to_dict()
         new = BaseModel(**n)
         self.assertFalse(new.created_at == new.updated_at)
+
+    class test_User():
+       def test_str(self):
+        self.maxDiff = None  # Add this line to display the full diff
+        # Rest of the test method code
+
