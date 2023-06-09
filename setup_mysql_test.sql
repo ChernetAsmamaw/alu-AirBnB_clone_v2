@@ -1,6 +1,6 @@
-create State name="California"
-create State name="Arizona"
-all State
-
-create Place city_id="0001" user_id="0001" name="My_little_house" number_rooms=4 number_bathrooms=2 max_guest=10 price_by_night=300 latitude=37.773972 longitude=-122.431297
-all Place
+-- A database hbnb_test_db and new user hbnb_test (in localhost)
+CREATE DATABASE IF NOT EXISTS hbnb_test_db;
+CREATE USER IF NOT EXISTS 'hbnb_test'@'localhost';
+ALTER USER 'hbnb_test'@'localhost' IDENTIFIED BY 'hbnb_test_pwd';
+GRANT ALL PRIVILEGES ON hbnb_test_db.* TO 'hbnb_test'@'localhost';
+GRANT SELECT ON performance_schema.* TO 'hbnb_test'@'localhost';
