@@ -33,7 +33,7 @@ class test_Place(test_basemodel):
         """ """
         new = self.value()
         new.name = "Place"
-        new.name = str(new.name)
+        new.name = str()
         self.assertEqual(type(new.name), str)
 
     def test_description(self):
