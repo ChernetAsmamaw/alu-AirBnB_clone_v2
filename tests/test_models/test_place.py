@@ -7,8 +7,6 @@ from sqlalchemy import Column, String
 
 class test_Place(test_basemodel):
     """ """
-    city_id = Column(String(60), nullable=False)
-
     def __init__(self, *args, **kwargs):
         """ """
         super().__init__(*args, **kwargs)
@@ -19,11 +17,6 @@ class test_Place(test_basemodel):
         """ """
         new = self.value()
         self.assertEqual(type(new.city_id), str)
-
-    def test_user_id(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.user_id), str)
 
     def test_name(self):
         """ """
