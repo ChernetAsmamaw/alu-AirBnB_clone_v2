@@ -17,10 +17,10 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
-        for key, value in kwargs.items():
-            if key not in self.__dict__:
-                raise KeyError(f"Unexpected key '{key}'")
-            setattr(self, key, value)
+        for key in kwargs:
+          if key not in expected_keys:
+            raise KeyError(f"Unexpected key '{key}'")
+
 
         if not kwargs:
             self.id = str(uuid.uuid4())
