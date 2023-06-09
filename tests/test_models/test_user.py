@@ -32,3 +32,8 @@ class test_User(test_basemodel):
         """ """
         new = self.value(password="a valid password")
         self.assertEqual(type(new.password), str)
+    
+    def test_kwargs_one(self):
+        """ """
+        with self.assertRaises(KeyError):
+            new = self.value(**{"invalid_key": "value"})
