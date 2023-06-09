@@ -2,10 +2,12 @@
 """ """
 from tests.test_models.test_base_model import test_basemodel
 from models.place import Place
+from sqlalchemy import Column, String
 
 
 class test_Place(test_basemodel):
     """ """
+    city_id = Column(String(60), nullable=False)
 
     def __init__(self, *args, **kwargs):
         """ """
