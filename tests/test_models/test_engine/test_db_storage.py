@@ -57,10 +57,11 @@ class TestDBStorage(unittest.TestCase):
     def test_amenity(self):
         """ test amenity """
         amenity = Amenity(name="Startlink")
+        overlaps="amenities"
         amenity.save()
         self.assertTrue(amenity.id in self.storage.all())
         self.assertTrue(amenity.name, "Startlink")
-        overlaps="amenities"
+        
 
     def test_review(self):
         """ test review """
