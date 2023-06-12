@@ -25,10 +25,10 @@ class TestDBStorage(unittest.TestCase):
 
     def test_user(self):
         """ Tests user """
-        user = User(name="Chyna")
+        user = User(name="chernet")
         user.save()
         self.assertTrue(user.id in self.storage.all())
-        self.assertEqual(user.name, "Chyna")
+        self.assertEqual(user.name, "chernet")
 
     def test_city(self):
         """ test user """
@@ -60,6 +60,7 @@ class TestDBStorage(unittest.TestCase):
         amenity.save()
         self.assertTrue(amenity.id in self.storage.all())
         self.assertTrue(amenity.name, "Startlink")
+        overlaps="amenities"
 
     def test_review(self):
         """ test review """
