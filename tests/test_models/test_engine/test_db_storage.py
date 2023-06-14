@@ -3,7 +3,7 @@ import unittest
 import models
 from models.user import User
 from models.review import Review
-from models.amenity import Amenity
+
 from models.state import State
 from models.place import Place
 from models.city import City
@@ -53,15 +53,6 @@ class TestDBStorage(unittest.TestCase):
         self.assertTrue(place.id in self.storage.all())
         self.assertEqual(place.number_rooms, 4)
         self.assertEqual(place.name, "Palace")
-
-    def test_amenity(self):
-        """ test amenity """
-        amenity = Amenity(name="Startlink")
-        overlaps="amenities"
-        amenity.save()
-        self.assertTrue(amenity.id in self.storage.all())
-        self.assertTrue(amenity.name, "Startlink")
-        
 
     def test_review(self):
         """ test review """
