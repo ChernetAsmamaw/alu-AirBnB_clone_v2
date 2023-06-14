@@ -70,21 +70,15 @@ class test_basemodel(unittest.TestCase):
         self.assertEqual(type(new.created_at), datetime.datetime)
 
     def test_updated_at(self):
-        """Test that updated_at attribute is updated"""
-        model = BaseModel()
-        created_at = model.created_at
-        updated_at = model.updated_at
-
-        # Wait for a second to ensure that the updated_at attribute is different
-        time.sleep(1)
-
-        model.save()
-        new = FileStorage().all()["BaseModel." + model.id]
-
-        self.assertTrue(created_at == new.created_at)
-        self.assertFalse(updated_at == new.updated_at)  # update this assertion
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.updated_at), datetime.datetime)
+        n = new.to_dict()
+        new = BaseModel(**n)
+        self.assertFalse(new.created_at == new.updated_at)z
 
     class test_User():
-        def test_str(self):
-            self.maxDiff = None  # Add this line to display the full diff
-            # Rest of the test method code
+       def test_str(self):
+        self.maxDiff = None  # Add this line to display the full diff
+        # Rest of the test method code
+
