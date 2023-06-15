@@ -81,4 +81,3 @@ class test_basemodel(unittest.TestCase):
        def test_str(self):
         self.maxDiff = None  # Add this line to display the full diff
         # Rest of the test method code
-
