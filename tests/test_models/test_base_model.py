@@ -57,10 +57,11 @@ class test_basemodel(unittest.TestCase):
             self.assertEqual(j[key], i.to_dict())
 
     def test_str(self):
-        """ """
-        i = self.value()
-        self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
-                         i.__dict__))
+        m = BaseModel()
+        m_dict = m.__dict__
+        expected = "[{}] ({}) {}".format(type(m).__name__, m.id, m_dict)
+        actual = str(m)
+        self.assertEqual(expected, actual)
 
     def test_todict(self):
         """ """
