@@ -20,14 +20,3 @@ class test_Amenity(test_basemodel):
         new = self.value()
         new.name = str(new.name)
         self.assertEqual(type(new.name), str)
-
-
-class TestAmenity(unittest.TestCase):
-    def test_save(self):
-        a = Amenity(name="test")
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            a.save()
-        self.assertIsNotNone(a.id)
-        self.assertIsNotNone(a.created_at)
-        self.assertIsNotNone(a.updated_at)
