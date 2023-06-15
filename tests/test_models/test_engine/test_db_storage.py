@@ -1,71 +1,60 @@
-#!/usr/bin/python3
+#!/usr/bin/python
+"""test for DBstorage"""
+from models.engine.file_storage import FileStorage
 import unittest
-import models
 from models.user import User
-from models.review import Review
-from models.amenity import Amenity
-from models.state import State
-from models.place import Place
-from models.city import City
 import os
+from models.engine.db_storage import DBStorage
+from models import storage
+from unittest.case import skipIf
 
 
-# skip these test if the storage is not db
-@unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') != 'db', "skip if not fs")
-class TestDBStorage(unittest.TestCase):
-    """DB Storage test"""
+@unittest.skipIf(
+    os.getenv('HBNB_TYPE_STORAGE') != 'db',
+    "skip if not database"
+)
+class test_dbstorage(unittest.TestCase):
+    """class to test the db storage methode"""
 
-    def setUp(self):
-        """ Set up test environment """
-        self.storage = models.storage
+    def setUp(cls):
+        """set up test env"""
+        cls.user = User()
+        cls.user.first_name = "Toto"
+        cls.user.last_name = "Tata"
+        cls.user.password = "Titi"
+        cls.user.email = "toto@mail.com"
+        cls.storage = FileStorage()
 
     def tearDown(self):
         """ Remove storage file at end of tests """
-        del self.storage
+        try:
+            os.remove('file.json')
+        except Exception:
+            pass
 
-    def test_user(self):
-        """ Tests user """
-        user = User(name="chernet")
-        user.save()
-        self.assertTrue(user.id in self.storage.all())
-        self.assertEqual(user.name, "chernet")
+    def testAll(self):
+        """
+           Test the all function in DB Storage.
+        """
+        obj = storage.all()
+        self.assertEqual(type(obj), dict)
 
-    def test_city(self):
-        """ test user """
-        city = City(name="Batch")
-        state = State()
-        city.state_id = state.id
-        city.save()
-        self.assertTrue(city.id in self.storage.all())
-        self.assertEqual(city.name, "Batch")
+    def testNew(self):
+        """test new"""
+        for obj in storage.all(User).values():
+            temp = obj
+            self.assertTrue(temp is obj)
 
-    def test_state(self):
-        """ test state"""
-        state = State(name="California")
-        state.save()
-        self.assertTrue(state.id in self.storage.all())
-        self.assertEqual(state.name, "California")
+    def testReload(self):
+        """
+           Test reload function in DB Storage
+        """
+        self.user.save()
+        storage.reload()
+        key = self.__keyFromInstance(self.user)
+        self.assertIn(key, storage.all().keys())
+        # self.user.delete()
+        # storage.save()
 
-    def test_place(self):
-        """ test place """
-        place = Place(name="Palace", number_rooms=4)
-        place.save()
-        self.assertTrue(place.id in self.storage.all())
-        self.assertEqual(place.number_rooms, 4)
-        self.assertEqual(place.name, "Palace")
-
-    def test_amenity(self):
-        """ test amenity """
-        amenity = Amenity(name="Startlink")
-        overlaps="amenities"
-        amenity.save()
-        self.assertTrue(amenity.id in self.storage.all())
-        self.assertTrue(amenity.name, "Startlink")
-        
-
-    def test_review(self):
-        """ test review """
-        review = Review(text="no comment")
-        review.save()
-        self.assertTrue(review.id in self.storage.all())
-        self.assertEqual(review.text, "no comment")
+    def __keyFromInstance(self, prmInstance):
+        return "{}.{}".format(prmInstance.__class__.__name__, prmInstance.id)

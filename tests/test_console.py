@@ -1,42 +1,305 @@
-#!/usr/bin/python3
-"""
-Contains the class TestConsoleDocs
-"""
-
-import console
-import inspect
-import pep8
+#!/usr/bin/python
+"""test for DBstorage"""
+from models.engine.file_storage import FileStorage
 import unittest
-HBNBCommand = console.HBNBCommand
+from models.user import User
+import os
+from models.engine.db_storage import DBStorage
+from models import storage
+from unittest.case import skipIf
+from os import system
+from io import StringIO
+from unittest.mock import patch
+from console import HBNBCommand
 
 
-class TestConsoleDocs(unittest.TestCase):
-    """Class for testing documentation of the console"""
+@unittest.skipIf(
+    os.getenv('HBNB_TYPE_STORAGE') != 'db',
+    "skip if not database"
+)
+class test_dbstorage(unittest.TestCase):
+    """class to test the db storage methode"""
 
-    def test_pep8_conformance_console(self):
-        """Test that console.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['console.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    def setUp(cls):
+        """set up test env"""
+        cls.user = User()
+        cls.user.first_name = "Toto"
+        cls.user.last_name = "Tata"
+        cls.user.password = "Titi"
+        cls.user.email = "toto@mail.com"
+        cls.storage = FileStorage()
 
-    def test_pep8_conformance_test_console(self):
-        """Test that tests/test_console.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['tests/test_console.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    def tearDown(self):
+        """ Remove storage file at end of tests """
+        try:
+            os.remove('file.json')
+        except Exception:
+            pass
 
-    def test_console_module_docstring(self):
-        """Test for the console.py module docstring"""
-        self.assertIsNot(console.__doc__, None,
-                         "console.py needs a docstring")
-        self.assertTrue(len(console.__doc__) >= 1,
-                        "console.py needs a docstring")
+    def testAll(self):
+        """
+           Test the all function in DB Storage.
+        """
+        obj = storage.all()
+        self.assertEqual(type(obj), dict)
 
-    def test_HBNBCommand_class_docstring(self):
-        """Test for the HBNBCommand class docstring"""
-        self.assertIsNot(HBNBCommand.__doc__, None,
-                         "HBNBCommand class needs a docstring")
-        self.assertTrue(len(HBNBCommand.__doc__) >= 1,
-                        "HBNBCommand class needs a docstring")
+    def testNew(self):
+        """test new"""
+        for obj in storage.all(User).values():
+            temp = obj
+            self.assertTrue(temp is obj)
+
+    def testReload(self):
+        """
+           Test reload function in DB Storage
+        """
+        self.user.save()
+        storage.reload()
+        key = self.__keyFromInstance(self.user)
+        self.assertIn(key, storage.all().keys())
+        # self.user.delete()
+        # storage.save()
+
+    def __keyFromInstance(self, prmInstance):
+        return "{}.{}".format(prmInstance.__class__.__name__, prmInstance.id)
+
+
+class ConsoleCreateTest(unittest.TestCase):
+    __classes = [
+        'BaseModel', 'User', 'State', 'City', 'Amenity', 'Place', 'Review'
+    ]
+
+    @classmethod
+    def setUp(self):
+        """
+            function construct
+        """
+        try:
+            os.rename("file.json", "tmp")
+        except IOError:
+            pass
+        FileStorage.__objects = {}
+
+    @classmethod
+    def tearDown(self):
+        """
+            functionn destruct
+        """
+        try:
+            os.remove("file.json")
+        except IOError:
+            pass
+        try:
+            os.rename("tmp", "file.json")
+        except IOError:
+            pass
+
+    def testCreateMissingClass(self):
+        """
+            create() missing class
+        """
+        with patch('sys.stdout', new=StringIO()) as output:
+            HBNBCommand().onecmd("create")
+            self.assertEqual(output.getvalue(), "** class name missing **\n")
+
+    def testInvalidClass(self):
+        """
+            create() invalid class
+        """
+        with patch('sys.stdout', new=StringIO()) as output:
+            HBNBCommand().onecmd("create toto")
+            self.assertEqual(output.getvalue(), "** class doesn't exist **\n")
+
+    @unittest.skipIf(
+        os.environ.get('HBNB_TYPE_STORAGE') != 'file',
+        "File storage tests only"
+    )
+    def testCreateInstance(self):
+        """
+            create()
+        """
+        for prmClassName in self.__classes:
+            self.__testCreateObject(prmClassName)
+
+    @unittest.skipIf(
+        os.environ.get('HBNB_TYPE_STORAGE') != 'file',
+        "File storage tests only"
+    )
+    def testCreateInstanceWithParameter(self):
+        """
+            create()
+        """
+        for prmClassName in self.__classes:
+            self.__testCreateObjectWithParameter(prmClassName)
+
+    @unittest.skipIf(
+        os.environ.get('HBNB_TYPE_STORAGE') != 'file',
+        "File storage tests only"
+    )
+    def testInvalidParameter(self):
+        """
+            create()
+        """
+        for prmClassName in self.__classes:
+            self.__testCreateObjectWithInvalidParameter(prmClassName)
+
+    @unittest.skipIf(
+        os.environ.get('HBNB_TYPE_STORAGE') != 'file',
+        "File storage tests only"
+    )
+    def testWithMixedValidityParameter(self):
+        """
+            create()
+        """
+        for prmClassName in self.__classes:
+            self.__testMixedValidityParameter(prmClassName)
+
+    @unittest.skipIf(
+        os.environ.get('HBNB_TYPE_STORAGE') != 'file',
+        "File storage tests only"
+    )
+    def testWithMixedTypeParameter(self):
+        """
+            create()
+        """
+        for prmClassName in self.__classes:
+            self.__testMixedTypeParameter(prmClassName)
+
+    @unittest.skipIf(
+        os.environ.get('HBNB_ENV') == 'test' and
+        os.environ.get('HBNB_TYPE_STORAGE') != 'file',
+        "File storage tests only"
+    )
+    @unittest.skipIf(
+        os.environ.get('HBNB_TYPE_STORAGE') != 'db',
+        "Database storage tests only"
+    )
+    def testCreateStateCityInstanceWithParameterInDB(self):
+        """
+            create State name="California"
+            create City name="San Francisco" state_id="JO9JOIJO..."
+        """
+        from models.state import State
+        from models.city import City
+
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "create {} {}={}".format('State', 'name', 'California')))
+            stateId = output.getvalue().strip()
+            stateKey = "{}.{}".format('State', stateId)
+            self.assertIn(stateKey, storage.all(State).keys())
+            state = self.__getObj('State', stateId)
+            self.assertIn('name', state.to_dict())
+            self.assertEqual(state.to_dict()['name'], 'California')
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format('State', stateId)))
+
+    def __testCreateObject(self, prmClassName):
+        """
+            test simple object creation
+        """
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "create {}".format(prmClassName)))
+            id = output.getvalue().strip()
+            key = "{}.{}".format(prmClassName, id)
+            self.assertIn(key, storage.all().keys())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
+
+    def __testCreateObjectWithParameter(self, prmClassName):
+        """
+            test object creation with parameter
+        """
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "create {} {}={}".format(prmClassName, 'name', 'California')))
+            id = output.getvalue().strip()
+            key = "{}.{}".format(prmClassName, id)
+            self.assertIn(key, storage.all().keys())
+            obj = self.__getObj(prmClassName, id)
+            self.assertIn('name', obj.to_dict())
+            self.assertEqual(obj.to_dict()['name'], 'California')
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
+
+    def __testCreateObjectWithInvalidParameter(self, prmClassName):
+        """
+            test object creation with invalid parameter
+        """
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "create {} {}".format(prmClassName, 'name')))
+            id = output.getvalue().strip()
+            key = "{}.{}".format(prmClassName, id)
+            self.assertIn(key, storage.all().keys())
+            obj = self.__getObj(prmClassName, id)
+            self.assertNotIn('name', obj.to_dict())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
+
+    def __testMixedValidityParameter(self, prmClassName):
+        """
+            test object creation with invalid and valid parameter
+        """
+        with patch('sys.stdout', new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "create {} {} {} {}={}".format(
+                    prmClassName, 'name', 'California', 'country', 'USA'
+                )
+            ))
+            id = output.getvalue().strip()
+            key = "{}.{}".format(prmClassName, id)
+            self.assertIn(key, storage.all().keys())
+            obj = self.__getObj(prmClassName, id)
+            self.assertIn('country', obj.to_dict())
+            self.assertEqual(obj.to_dict()['country'], 'USA')
+            self.assertNotIn('name', obj.to_dict())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
+
+    def __testMixedTypeParameter(self, prmClassName):
+        """
+            test object creation with different type of parameter
+        """
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(
+                HBNBCommand().onecmd(
+                    "create {} {}={} {}={} {}={}".format(
+                        prmClassName,
+                        'age',
+                        3,
+                        'name',
+                        "California",
+                        'latitude',
+                        8.6545
+                    )
+                )
+            )
+            id = output.getvalue().strip()
+            key = "{}.{}".format(prmClassName, id)
+            self.assertIn(key, storage.all().keys())
+            obj = self.__getObj(prmClassName, id)
+            self.assertIn('age', obj.to_dict())
+            self.assertEqual(obj.to_dict()['age'], 3)
+            self.assertIn('name', obj.to_dict())
+            self.assertEqual(obj.to_dict()['name'], 'California')
+            self.assertIn('latitude', obj.to_dict())
+            self.assertEqual(obj.to_dict()['latitude'], 8.6545)
+            self.assertIsInstance(obj.age, int)
+            self.assertIsInstance(obj.name, str)
+            self.assertIsInstance(obj.latitude, float)
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
+
+    def __getObj(self, prmClassName: str, prmUuid: str):
+        """
+            get object from storage
+        """
+        return storage.all()["{}.{}".format(prmClassName, prmUuid)]

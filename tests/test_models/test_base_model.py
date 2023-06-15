@@ -47,6 +47,22 @@ class test_basemodel(unittest.TestCase):
         with self.assertRaises(TypeError):
             new = BaseModel(**copy)
 
+    def test_save(self):
+        """ Testing save """
+        i = self.value()
+        i.save()
+        key = self.name + "." + i.id
+        with open('file.json', 'r') as f:
+            j = json.load(f)
+            self.assertEqual(j[key], i.to_dict())
+
+    def test_str(self):
+        m = BaseModel()
+        m_dict = m.__dict__
+        expected = "[{}] ({}) {}".format(type(m).__name__, m.id, m_dict)
+        actual = str(m)
+        self.assertEqual(expected, actual)
+
     def test_todict(self):
         """ """
         i = self.value()
