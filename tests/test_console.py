@@ -22,6 +22,7 @@ class test_dbstorage(unittest.TestCase):
 
     def setUp(cls):
         """set up test env"""
+        cls.user = User()
         cls.user.first_name = "Toto"
         cls.user.last_name = "Tata"
         cls.user.password = "Titi"
