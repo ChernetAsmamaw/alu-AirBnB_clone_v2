@@ -7,7 +7,7 @@ sudo apt-get -y install nginx
 # Create the following folders if they don’t already exist:
 sudo mkdir -p /data/web_static/releases/test /data/web_static/shared
 # Create a fake HTML file with sample to test Nginx configuration
-echo "<html><head></head><body>Test Nginx configuration</body></html>" | sudo tee /data/web_static/releases/test/index.html
+echo "Holberton School" | sudo tee /data/web_static/releases/test/index.html > /dev/null
 # Create a symbolic link. If the symbolic link already exists, it is deleted and recreated every time the script is ran.
 sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 # Give ownership of the /data/ folder to the ubuntu user AND group. This should be recursive.
