@@ -1,4 +1,4 @@
-#!/bin/usr/python3
+#!/usr/bin/python3
 """Fabfile to generate a .tgz archive from the contents
 of the web_static folder of the AirBnB Clone repo through
 the function do_pack"""
