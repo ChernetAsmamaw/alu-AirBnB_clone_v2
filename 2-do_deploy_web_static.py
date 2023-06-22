@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """Fabric script that distributes an archive to your web servers"""
-
 from fabric.api env, put, run
 from os.path import exists
 
@@ -10,11 +9,9 @@ env.key = "~/.ssh/id_rsa"
 
 
 def do_deploy(archive_path):
-    """Distributes an archive to your web servers using the
-    function do_deploy"""
+    """Distributes an archive to your web servers"""
     if not exists(archive_path):
         return False
-    
     try:
         archive_name = archive_path.split("/")[-1]
         name = file_name.split(".")[0]
