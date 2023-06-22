@@ -10,7 +10,8 @@ env.key = "~/.ssh/id_rsa"
 
 
 def do_deploy(archive_path):
-    """Distributes an archive to your web servers"""
+    """Distributes an archive to your web servers using the
+    function do_deploy"""
     if not exists(archive_path):
         return False
     
