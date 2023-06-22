@@ -19,3 +19,6 @@ def do_pack():
         return archive_name
     else:
         return None
+
+# This file should be run using this syntax:
+# fab -f 1-pack_web_static.py do_pack
