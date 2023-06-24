@@ -5,6 +5,7 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 sudo apt-get -y install nginx
 sudo service nginx start
+
 # Create the following folders if they don’t already exist:
 sudo mkdir -p /data/web_static/releases/test /data/web_static/shared
 
