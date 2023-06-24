@@ -12,6 +12,7 @@ sudo mkdir -p /data/web_static/releases/test /data/web_static/shared
 # Create a fake HTML file with sample to test Nginx configuration
 echo "Hello, this is a test HTML file." | sudo tee /data/web_static/releases/test/index.html
 
+# Remove the symbolic link /data/web_static/current from the web server
 sudo rm -rf /data/web_static/current
 
 # Create a symbolic link. If the symbolic link already exists, it is deleted and recreated every time the script is ran.
