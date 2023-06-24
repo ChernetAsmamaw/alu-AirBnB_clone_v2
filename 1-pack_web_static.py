@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """Fabric script which generates a tgz archive"""
 
 from datetime import datetime
