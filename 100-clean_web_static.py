@@ -4,7 +4,7 @@
 import os
 from fabric.api import *
 
-env.hosts = ["3.90.35.215", "54.159.189.41"]
+env.hosts = ["50.19.171.37", "3.85.229.185"]
 
 
 def do_clean(number=0):
@@ -17,13 +17,13 @@ def do_clean(number=0):
     archives = sorted(os.listdir("versions"))
     [archives.pop() for i in range(number)]
     with lcd("versions"):
-        [local("rm ./{}".format(archive)) for archive in archives]
+        [local("rm ./{}".format(a)) for a in archives]
 
     with cd("/data/web_static/releases"):
         archives = run("ls -tr").split()
+        archives = [a for a in archives if "web_static_" in a]
         [archives.pop() for i in range(number)]
-        [run("rm -rf ./{}".format(archive)) for archive in archives]
-
+        [run("rm -rf ./{}".format(a)) for a in archives]
 
 # Run the script like this:
 # First "ls -ltr versions" | to see the list of archives
