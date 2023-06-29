@@ -16,7 +16,7 @@ def cities_by_states():
     # LI tag: description of one State: <state.id>: <B><state.name></B>
     # LI tag: description of one City: <city.id>: <B><city.name></B>
     # sorted by name (A->Z)
-    states = storage.all("State")
+    states = storage.all(State)
     return render_template("8-cities_by_states.html", states=states)
 
 
