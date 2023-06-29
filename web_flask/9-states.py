@@ -12,18 +12,28 @@ app = Flask(__name__)
 @app.route('/states', strict_slashes=False)
 @app.route('/states/<id>', strict_slashes=False)
 def states(state_id=None):
-    """Display a HTML page: (inside the tag BODY)"""
-    # H1 tag: "States" inside the tag BODY
-    # UL tag: with the list of all State objects present in DBStorage
-    # LI tag: description of one State: <state.id>: <B><state.name></B>
-    # LI tag: description of one City: <city.id>: <B><city.name></B>
-    # sorted by name (A->Z)
-    states = storage.all("State")
+    """Display a HTML page: (inside the tag BODY)
+       -> h1: "States"
+       -> ul: list of all 'State' objects present in 'DBStorage'
+              sorted by name (A-Z)
+            -> li: description of one 'State':
+                   "<state.id>: <b><state.name><b>"
+
+       for /states/<id> route: displays a HTML page: (inside the <body> tag)
+       if a 'State' object is found with this 'id':
+       -> h1: "State"
+       -> h3: "Cities:"
+            -> ul: list of 'City' objects linked to the 'State'
+                   sorted by name (A->Z)
+            -> li: description of one 'City':
+                   "<city.id>: <b><city.name></b>"
+       otherwise:
+       -> h1: "Not found!"
+    """
+    states = storage.all(State)
     if state_id is not None:
         state_id = 'State.' + state_id
-        return render_template('9-states.html', states=states, state_id=state_id)
-    else:
-        return "Not found!"
+    return render_template("9-states.html", states=states, state_id=state_id)
 
 
 @app.teardown_appcontext
