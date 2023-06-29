@@ -3,7 +3,7 @@
 
 from flask import Flask, render_template
 from models import storage
-from models.state import State
+from models import *
 
 
 app = Flask(__name__)
@@ -18,10 +18,10 @@ def states(id=None):
     # LI tag: description of one State: <state.id>: <B><state.name></B>
     # LI tag: description of one City: <city.id>: <B><city.name></B>
     # sorted by name (A->Z)
-    states = storage.all(State)
+    states = storage.all("State")
     if state_id is not None:
-        state_id = "State." + state_id
-    return render_template("9-states.html", states=states, state_id=state_id)
+        state_id = 'State.' + state_id
+    return render_template('9-states.html', states=states, state_id=state_id)
 
 
 @app.teardown_appcontext
