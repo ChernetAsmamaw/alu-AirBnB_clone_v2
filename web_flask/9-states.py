@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @app.route('/states', strict_slashes=False)
 @app.route('/states/<id>', strict_slashes=False)
-def states(id=None):
+def states(state_id=None):
     """Display a HTML page: (inside the tag BODY)"""
     # H1 tag: "States" inside the tag BODY
     # UL tag: with the list of all State objects present in DBStorage
