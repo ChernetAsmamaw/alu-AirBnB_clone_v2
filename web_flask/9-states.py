@@ -3,14 +3,14 @@
 
 from flask import Flask, render_template
 from models import storage
-from models import *
+from models.state import State
 
 
 app = Flask(__name__)
 
 
 @app.route('/states', strict_slashes=False)
-@app.route('/states/<id>', strict_slashes=False)
+@app.route('/states/<state_id>', strict_slashes=False)
 def states(state_id=None):
     """Display a HTML page: (inside the tag BODY)
        -> h1: "States"
